@@ -6,32 +6,103 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/open"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="openXls"
-        android:text="Abrir xls"
+            <ImageView
+                android:layout_width="145dp"
+                android:layout_height="143dp"
+                android:layout_marginTop="28dp"
+                android:src="@drawable/escudo17"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+            </ImageView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="350dp"
+                android:layout_height="400dp"
+                android:layout_marginTop="424dp"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.491"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gradiente_azul">
+                    <Button
+                        android:id="@+id/open"
+                        android:layout_width="150dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="160dp"
+                        android:onClick="openXls"
+                        android:textColor="@color/red_ufpso"
+                        android:layout_marginHorizontal="95dp"
+                        android:background="@drawable/border_line_button_secondary"
+                        android:text="Cargar Horario">
+                    </Button>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="216dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.138"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Inicio de sesión"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                android:textColor="#989393"
+                android:layout_marginHorizontal="60dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                ></TextView>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="20dp"
+                android:hint="código"
+                android:textColorHint="#757373"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/registerlittle"
+                android:drawableTint="@color/red_ufpso"
+                android:background="@drawable/border_line">
+            </EditText>
+            <Button
+                android:layout_width="110dp"
+                android:layout_height="48dp"
+                android:text="Ingresar"
+                android:layout_marginTop="25dp"
+                android:textColor="@color/red_ufpso"
+                android:background="@drawable/border_line"
+                android:layout_marginHorizontal="90dp">
+            </Button>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="obtainValue"
-        android:text="Consultar profesor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.843"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
