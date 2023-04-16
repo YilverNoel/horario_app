@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="verifyAttendance"
     tools:context=".Asistencia">
 
     <androidx.cardview.widget.CardView
@@ -17,15 +18,16 @@
         app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_marginBottom="35dp"
             android:layout_gravity="bottom|center"
-            android:text="Control de asistencia">
+            android:layout_marginBottom="35dp"
+            android:text="Control de asistencia"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold">
 
         </TextView>
 
@@ -35,12 +37,13 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginTop="64dp"
-        app:cardElevation="30dp"
         app:cardCornerRadius="20dp"
+        app:cardElevation="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -71,10 +74,11 @@
                 app:layout_constraintTop_toTopOf="parent"></TextView>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/verificar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_style_control"
+                android:onClick="verifyAttendance"
                 android:text="Verificar asistencia"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -90,18 +94,19 @@
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:background="#393737"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:orientation="vertical">
+        app:layout_constraintStart_toStartOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
             android:text="V.1.0"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_margin="20dp"
-            android:layout_gravity="center"></TextView>
+            android:textSize="20sp"></TextView>
 
     </LinearLayout>
 
