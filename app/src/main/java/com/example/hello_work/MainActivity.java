@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void singIn(View view){
-        String nameTeacher = "";
+        String nameTeacher;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] projection = {"nombre_profesor" };
         String selection = "codigo_profesor = ?";
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 null
         );
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst() && !code.getText().toString().isEmpty()) {
             nameTeacher =  cursor.getString(cursor.getColumnIndexOrThrow("nombre_profesor"));
             Intent intent = new Intent(this, Asistencia.class);
             intent.putExtra("nameTeacher", nameTeacher);
