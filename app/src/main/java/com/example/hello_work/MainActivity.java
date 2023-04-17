@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Toast.makeText(this, "El codigo ingresado no existe", Toast.LENGTH_LONG).show();
         }
+        db.close();
+        cursor.close();
 
     }
 
