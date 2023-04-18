@@ -84,7 +84,7 @@ public class Asistencia extends AppCompatActivity {
             if(isClass){
                 Toast.makeText(this,"Se ha registrado la asistencia de la \n asignatura "+nameSubject, Toast.LENGTH_LONG).show();
             }else{
-                Toast.makeText(this,"Se ha registrado la asistencia", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"No asignaturas para registrar asistencia", Toast.LENGTH_LONG).show();
             }
             cursor.close();
         }catch (DayWeekNotWorkException dayWeekNotWorkException){
