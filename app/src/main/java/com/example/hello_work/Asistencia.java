@@ -1,17 +1,21 @@
 package com.example.hello_work;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.hello_work.domain.exception.DayWeekNotWorkException;
+import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
 import com.example.hello_work.infraestructure.repository.MiDbHelper;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -41,61 +45,107 @@ public class Asistencia extends AppCompatActivity {
     }
 
     public void verifyAttendance(View view) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Boolean isClass = false;
         LocalTime hourNow = LocalTime.now();
         LocalDate dateNow = LocalDate.now();
-        try{
-            String dayOfWeek = translateDayWeek(dateNow.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
-            String[] projection = {"nombre_materia", dayOfWeek}; //columnas que deseas obtener
-            String selection = "codigo_profesor = ? and " + dayOfWeek + " != ?"; //condición para obtener el usuario con id=1
-            String[] selectionArgs = {codeTeacher.getText().toString(), "null"}; //valor para la condición
-            Cursor cursor = db.query(
-                    "horario_carrera",
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    null
-            );
-            List<Map<String, String>> dataClass = new ArrayList<>();
-            String nameSubject = "";
-            Map<String, String> classTeacher;
-            while (cursor.moveToNext()) {
-                classTeacher = new HashMap<>();//mueve el cursor al primer registro, si existes
-                classTeacher.put("nombre_materia", cursor.getString(cursor.getColumnIndexOrThrow("nombre_materia")));
-                classTeacher.put(dayOfWeek, cursor.getString(cursor.getColumnIndexOrThrow(dayOfWeek)));
-                dataClass.add(classTeacher);
-            }
-            Integer hour = hourNow.getHour();
-            for (Map<String, String> arr : dataClass) {
-                String hourClass = arr.get(dayOfWeek);
-                nameSubject = arr.get("nombre_materia");
-                String[] schedule = hourClass.split(" ");
-                Integer startTime = Integer.valueOf(schedule[0].substring(0, 2));
-                Integer endTime = Integer.valueOf(schedule[2].substring(0, 2));
-                if (hour >= startTime && hour < endTime) {
-                    isClass = true;
-                    break;
-                }
-            }
+        String dayOfWeek = translateDayWeek(dateNow.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        ConnectionFirebase.connection().collection(COLLECTION_RACE_SCHEDULE)
+                .whereEqualTo("codigo_profesor", codeTeacher.getText().toString().split(":")[1])
+                .whereNotEqualTo(dayOfWeek, "null")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Map<String, String>> dataClass = new ArrayList<>();
+                    String nameSubject = "";
+                    Map<String, String> classTeacher;
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        classTeacher = new HashMap<>();//mueve el cursor al primer registro, si existes
+                        classTeacher.put("nombre_materia", documentSnapshot.get("nombre_materia").toString());
+                        classTeacher.put(dayOfWeek, documentSnapshot.get(dayOfWeek).toString());
+                        dataClass.add(classTeacher);
+                    }
+                    Integer hour = hourNow.getHour();
+                    Boolean isClass = false;
+                    for (Map<String, String> arr : dataClass) {
+                        String hourClass = arr.get(dayOfWeek);
+                        nameSubject = arr.get("nombre_materia");
+                        String[] schedule = hourClass.split(" ");
+                        Integer startTime = Integer.valueOf(schedule[0].substring(0, 2));
+                        Integer endTime = Integer.valueOf(schedule[2].substring(0, 2));
+                        System.out.println("Hora actual " + hour);
+                        System.out.println("startTime " + startTime);
+                        System.out.println("endTime " + endTime);
+                        if (hour >= startTime && hour < endTime) {
+                            isClass = true;
+                            break;
+                        }
+                    }
+                    if (isClass) {
+                        Toast.makeText(this, "Se ha registrado la asistencia de la \n asignatura " + nameSubject, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "No asignaturas para registrar asistencia", Toast.LENGTH_LONG).show();
+                    }
+                }).addOnFailureListener(
+                        e -> System.out.println(e.getMessage())
+                );
+        listHourTeacherDayWeek();
+    }
 
-            if(isClass){
-                Toast.makeText(this,"Se ha registrado la asistencia de la \n asignatura "+nameSubject, Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this,"No asignaturas para registrar asistencia", Toast.LENGTH_LONG).show();
-            }
-            cursor.close();
-        }catch (DayWeekNotWorkException dayWeekNotWorkException){
-            Toast.makeText(this, dayWeekNotWorkException.getMessage(),Toast.LENGTH_LONG).show();
-        }catch (Exception e){
-            Toast.makeText(this, e.getMessage(),Toast.LENGTH_LONG).show();
-        }
-        finally {
-            db.close();
-        }
+    private void listHourTeacherDayWeek() {
+        LocalTime hourNow = LocalTime.now();
+        LocalDate dateNow = LocalDate.now();
+        String dayOfWeek = translateDayWeek(dateNow.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        ConnectionFirebase.connection()
+                .collection(COLLECTION_RACE_SCHEDULE)
+                .whereNotEqualTo(dayOfWeek, "null")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Map<String, String>> dataClass = new ArrayList<>();
+                    Map<String, String> classTeacher;
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        classTeacher = new HashMap<>();//mueve el cursor al primer registro, si existes
+                        classTeacher.put("nombre_materia", documentSnapshot.get("nombre_materia").toString());
+                        classTeacher.put(dayOfWeek, documentSnapshot.get(dayOfWeek).toString());
+                        classTeacher.put("nombre_profesor", documentSnapshot.get("nombre_profesor").toString());
+                        dataClass.add(classTeacher);
+                    }
+                    Integer endTime=0;
+                    String[] hourClass;
+                    for (Map<String, String> listclass : dataClass) {
+                        hourClass = obtainHourClass(listclass.get(dayOfWeek));
+                        int j = 2;
+                        for(int i=0; i<hourClass.length/4;i++){
+                            endTime = Integer.valueOf(hourClass[j].substring(0, 2));
+                            j +=4;
+                            if (hourNow.getHour() <= endTime) {
+                                break;
+                            }
+                        }
+                        if (hourNow.getHour() < endTime) {
+                            System.out.println(listclass.get("nombre_materia"));
+                            System.out.println(listclass.get(dayOfWeek));
+                            System.out.println(listclass.get("nombre_profesor"));
+                            System.out.println("****************************************************");
+                        }
 
+                    }
+                }).addOnFailureListener(e->
+                    System.out.println(e.getMessage())
+                );
+    }
+
+    private String[] obtainHourClass(String rangeClass) {
+        String[] hourClass = rangeClass
+                .replace("   ", " ")
+                .split(",");
+
+        String[] hoursClass = new String[hourClass.length * 4];
+        int i = 0;
+        for (String hour : hourClass) {
+            for (String hourCheck : hour.trim().split(" ")) {
+                hoursClass[i] = hourCheck;
+                i++;
+            }
+        }
+        return hoursClass;
     }
 
     private String translateDayWeek(String nameDay) {

@@ -1,5 +1,6 @@
 package com.example.hello_work.infraestructure.adapter.imp;
 
+import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 import static com.example.hello_work.domain.subject.SubjectTeacher.CODE_TEACHER;
 import static com.example.hello_work.domain.subject.SubjectTeacher.ID;
 import static com.example.hello_work.domain.subject.SubjectTeacher.NAME_SUBJECT;
@@ -17,15 +18,18 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.hello_work.infraestructure.adapter.IAttendanceTeacher;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.apache.poi.ss.usermodel.Row;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class AttendanceTeacher implements IAttendanceTeacher {
-    private final static String RACE_SCHEDULE = "horario_carrera";
 
     @Override
-    public void insertTeacher(Row row, SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
+    public void insertTeacher(Row row, FirebaseFirestore db) {
+        Map<String, Object> values = new LinkedHashMap<>();
         String[] propertiesTeacher = separateString(String.valueOf(row.getCell(12)));
         values.put(ID.getNameSubjectTeacher(), String.valueOf(row.getCell(3)));
         values.put(NAME_SUBJECT.getNameSubjectTeacher(), String.valueOf(row.getCell(4)));
@@ -39,7 +43,16 @@ public class AttendanceTeacher implements IAttendanceTeacher {
         values.put(CODE_TEACHER.getNameSubjectTeacher(), propertiesTeacher[0].trim());
         values.put(NAME_TEACHER.getNameSubjectTeacher(), propertiesTeacher[1].trim());
         values.put(NUMBER_ENROLLED.getNameSubjectTeacher(), Double.valueOf(String.valueOf(row.getCell(13))));
-        db.insert(RACE_SCHEDULE,null, values);
+        db.collection(COLLECTION_RACE_SCHEDULE)
+                .add(values)
+                .addOnSuccessListener(documentReference -> {
+                    // Se agregaron los datos exitosamente
+                    System.out.println("Se agregaron los datos exitosamente");
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al agregar los datos
+                    System.out.println("error -> "+e.getMessage());
+                });
     }
 
     private String[] separateString(String row){

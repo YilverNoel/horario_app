@@ -1,7 +1,8 @@
 package com.example.hello_work;
 
+import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
+
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
@@ -15,25 +16,28 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hello_work.infraestructure.adapter.IAttendanceTeacher;
 import com.example.hello_work.infraestructure.adapter.imp.AttendanceTeacher;
+import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
 import com.example.hello_work.infraestructure.repository.MiDbHelper;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private IAttendanceTeacher attendanceTeacher;
-    private SQLiteOpenHelper dbHelper;
     private EditText code;
 
     private final ActivityResultLauncher<String> selectFileLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
-                try(InputStream inputStream = getContentResolver().openInputStream(uri);
-                    SQLiteDatabase db = dbHelper.getWritableDatabase()) {
+                try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
                     HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
                     Sheet sheet = workbook.getSheetAt(0);
 
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     rowIterator.next();
 
                     while (rowIterator.hasNext()) {
-                        attendanceTeacher.insertTeacher(rowIterator.next(), db);
+                        attendanceTeacher.insertTeacher(rowIterator.next(), ConnectionFirebase.connection());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -55,43 +59,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new MiDbHelper(this);
+        FirebaseApp.initializeApp(MainActivity.this);
         attendanceTeacher = new AttendanceTeacher();
         code = findViewById(R.id.code);
     }
 
-    public void openXls(View view){
-        selectFileLauncher.launch("application/vnd.ms-excel");
+    public void openXls(View view) {
+        ConnectionFirebase.connection()
+                .collection(COLLECTION_RACE_SCHEDULE)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        deleteDataAttendance();
+                    }
+                    selectFileLauncher.launch("application/vnd.ms-excel");
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al obtener los datos
+                    System.out.println(e.getMessage());
+                });
     }
 
-    public void singIn(View view){
-        String nameTeacher;
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] projection = {"nombre_profesor" };
-        String selection = "codigo_profesor = ?";
-        String[] selectionArgs = { code.getText().toString()};
-        Cursor cursor = db.query(
-                "horario_carrera",
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null
-        );
-        if (cursor.moveToFirst() && !code.getText().toString().isEmpty()) {
-            nameTeacher =  cursor.getString(cursor.getColumnIndexOrThrow("nombre_profesor"));
+    private void deleteDataAttendance() {
+        ConnectionFirebase.connection()
+                .collection(COLLECTION_RACE_SCHEDULE)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        documentSnapshot.getReference().delete();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al obtener los datos
+                    System.out.println(e.getMessage());
+                });
+    }
+
+
+    public void singIn(View view) {
+        List<String> nameTeacher = new ArrayList<>();
+        ConnectionFirebase.connection().collection(COLLECTION_RACE_SCHEDULE)
+                .whereEqualTo("codigo_profesor", code.getText().toString())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        nameTeacher.add(documentSnapshot.get("nombre_profesor").toString());
+                    }
+                    validateNameTeacher(nameTeacher.get(0));
+                }).addOnFailureListener(
+                        e -> System.out.println(e.getMessage())
+                );
+    }
+
+    private void validateNameTeacher(String nameTeacher) {
+        if (!nameTeacher.isEmpty() && !code.getText().toString().isEmpty()) {
             Intent intent = new Intent(this, Asistencia.class);
             intent.putExtra("nameTeacher", nameTeacher);
             intent.putExtra("codeTeacher", code.getText().toString());
             startActivity(intent);
-        }else{
+        } else {
             Toast.makeText(this, "El codigo ingresado no existe", Toast.LENGTH_LONG).show();
         }
-        db.close();
-        cursor.close();
-
     }
-
-
 }

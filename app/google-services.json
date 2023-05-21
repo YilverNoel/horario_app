@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "409194588980",
+    "project_id": "ufpsoasistencia",
+    "storage_bucket": "ufpsoasistencia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409194588980:android:36e6c6011bc8eba8821361",
+        "android_client_info": {
+          "package_name": "com.example.hello_work"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409194588980-88udhei6uc4sc3a4qo4ij39duh9nag68.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hello_work",
+            "certificate_hash": "edfabb7030c5eecb6b0f384546b99dc4d513ad4c"
+          }
+        },
+        {
+          "client_id": "409194588980-sopt6g1ope1u3phhi65au64deggqou65.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWc4SgYrdiXY_Oph_Vu32s8ZYHnoSefnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409194588980-sopt6g1ope1u3phhi65au64deggqou65.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
