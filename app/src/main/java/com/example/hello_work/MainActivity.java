@@ -115,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
     private void validateNameTeacher(String nameTeacher) {
         if (!nameTeacher.isEmpty() && !code.getText().toString().isEmpty()) {
             Intent intent = new Intent(this, Asistencia.class);
-            intent.putExtra("nameTeacher", nameTeacher);
-            intent.putExtra("codeTeacher", code.getText().toString());
             startActivity(intent);
         } else {
             Toast.makeText(this, "El codigo ingresado no existe", Toast.LENGTH_LONG).show();

@@ -2,17 +2,30 @@ package com.example.hello_work;
 
 import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hello_work.domain.exception.DayWeekNotWorkException;
+import com.example.hello_work.infraestructure.adapter.ClassData;
+import com.example.hello_work.infraestructure.adapter.ListAdapter.DataListAdapter;
+import com.example.hello_work.infraestructure.adapter.listener.Listener;
 import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
 import com.example.hello_work.infraestructure.repository.MiDbHelper;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,22 +39,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class Asistencia extends AppCompatActivity {
+public class Asistencia extends AppCompatActivity implements Listener {
     private TextView nameTeacher;
     private TextView codeTeacher;
 
     private SQLiteOpenHelper dbHelper;
 
+    private RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHelper = new MiDbHelper(this);
         setContentView(R.layout.activity_asistencia);
-        nameTeacher = findViewById(R.id.txt_nombre);
-        codeTeacher = findViewById(R.id.txt_codigo);
+        //nameTeacher = findViewById(R.id.txt_nombre);
+       // codeTeacher = findViewById(R.id.txt_codigo);
 
-        nameTeacher.setText("Nombre: " + getIntent().getExtras().getString("nameTeacher"));
-        codeTeacher.setText("Codigo:" + getIntent().getExtras().getString("codeTeacher"));
+        recyclerView = findViewById(R.id.recycler);
+        List<ClassData> itemList = new ArrayList<>();
+        itemList.add(new ClassData("Eduard Bayona Ibañez", "Introduccion a la ingenieria", "10:00 - 12:00 i205"));
+        itemList.add(new ClassData("Freddy Alonso Alvarez", "Fisica mecanica", "08:00 - 10:00 i106"));
+        DataListAdapter adapter = new DataListAdapter(itemList, this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+
     }
 
     public void verifyAttendance(View view) {
@@ -165,5 +186,10 @@ public class Asistencia extends AppCompatActivity {
             default:
                 throw new DayWeekNotWorkException("No es un dia laboral");
         }
+    }
+
+    @Override
+    public void callback(String item) {
+        Toast.makeText(this, item, Toast.LENGTH_LONG).show();
     }
 }
