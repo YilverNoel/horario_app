@@ -36,19 +36,20 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:background="@drawable/corner">
-                    <Button
+                    <TextView
                         android:id="@+id/open"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="40dp"
                         android:onClick="openXls"
-                        android:textColor="@color/red_ufpso"
-                        android:layout_marginHorizontal="95dp"
-                        android:background="@drawable/border_line_button_secondary"
-                        android:text="Cargar Horario">
-                    </Button>
+                        android:textColor="@color/white"
+                        android:text="Version 2.0.0"
+                        android:textSize="20dp"
+                        >
+                    </TextView>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

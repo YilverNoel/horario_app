@@ -3,25 +3,38 @@ package com.example.hello_work;
 import static com.example.hello_work.constan.Constant.COLLECTION_ATTENDANCE;
 import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hello_work.domain.exception.DayWeekNotWorkException;
 import com.example.hello_work.infraestructure.adapter.ClassData;
+import com.example.hello_work.infraestructure.adapter.IAttendanceTeacher;
 import com.example.hello_work.infraestructure.adapter.ListAdapter.DataListAdapter;
+import com.example.hello_work.infraestructure.adapter.imp.AttendanceTeacher;
 import com.example.hello_work.infraestructure.adapter.listener.Listener;
 import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,12 +42,14 @@ import java.util.Map;
 public class Asistencia extends AppCompatActivity implements Listener {
 
     private RecyclerView recyclerView;
+    private IAttendanceTeacher attendanceTeacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asistencia);
 
+        attendanceTeacher = new AttendanceTeacher();
         recyclerView = findViewById(R.id.recycler);
         try {
             listHourTeacherDayWeek();
@@ -171,4 +186,74 @@ public class Asistencia extends AppCompatActivity implements Listener {
                     System.out.println(e.getMessage())
                 );
     }
+
+    public void openXls(View view) {
+        ConnectionFirebase.connection()
+                .collection(COLLECTION_RACE_SCHEDULE)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Confirmación");
+                    builder.setMessage("¿Estás seguro de que quieres cargar de nuevo los datos?");
+                    builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                deleteDataAttendance();
+                                selectFileLauncher.launch("application/vnd.ms-excel");
+                            }else{
+                                selectFileLauncher.launch("application/vnd.ms-excel");
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // El usuario hizo clic en Cancelar, no hacer nada
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                })
+                .addOnFailureListener(e -> {
+                    // Ocurrió un error al obtener los datos
+                    System.out.println(e.getMessage());
+                });
+    }
+
+    private void deleteDataAttendance() {
+        ConnectionFirebase.connection()
+                .collection(COLLECTION_RACE_SCHEDULE)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        documentSnapshot.getReference().delete();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        System.out.println(e.getMessage())
+                );
+    }
+
+    private final ActivityResultLauncher<String> selectFileLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+                    HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
+                    Sheet sheet = workbook.getSheetAt(0);
+
+                    Iterator<Row> rowIterator = sheet.iterator();
+                    rowIterator.hasNext();
+                    rowIterator.next();
+
+                    while (rowIterator.hasNext()) {
+                        attendanceTeacher.insertTeacher(rowIterator.next(), ConnectionFirebase.connection());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                    Toast.makeText(Asistencia.this, "Error al procesar el archivo", Toast.LENGTH_SHORT).show();
+                }
+            });
 }

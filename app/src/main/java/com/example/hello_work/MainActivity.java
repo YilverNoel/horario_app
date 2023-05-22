@@ -31,88 +31,15 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private IAttendanceTeacher attendanceTeacher;
     private EditText code;
-
-    private final ActivityResultLauncher<String> selectFileLauncher = registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
-            uri -> {
-                try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
-                    HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
-                    Sheet sheet = workbook.getSheetAt(0);
-
-                    Iterator<Row> rowIterator = sheet.iterator();
-                    rowIterator.hasNext();
-                    rowIterator.next();
-
-                    while (rowIterator.hasNext()) {
-                        attendanceTeacher.insertTeacher(rowIterator.next(), ConnectionFirebase.connection());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                    Toast.makeText(MainActivity.this, "Error al procesar el archivo", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(MainActivity.this);
-        attendanceTeacher = new AttendanceTeacher();
         code = findViewById(R.id.code);
     }
-
-    public void openXls(View view) {
-        ConnectionFirebase.connection()
-                .collection(COLLECTION_RACE_SCHEDULE)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Confirmación");
-                    builder.setMessage("¿Estás seguro de que quieres cargar de nuevo los datos?");
-                    builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (!queryDocumentSnapshots.isEmpty()) {
-                                deleteDataAttendance();
-                                selectFileLauncher.launch("application/vnd.ms-excel");
-                            }else{
-                                selectFileLauncher.launch("application/vnd.ms-excel");
-                            }
-                        }
-                    });
-                    builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // El usuario hizo clic en Cancelar, no hacer nada
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                })
-                .addOnFailureListener(e -> {
-                    // Ocurrió un error al obtener los datos
-                    System.out.println(e.getMessage());
-                });
-    }
-
-    private void deleteDataAttendance() {
-        ConnectionFirebase.connection()
-                .collection(COLLECTION_RACE_SCHEDULE)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                        documentSnapshot.getReference().delete();
-                    }
-                })
-                .addOnFailureListener(e ->
-                        System.out.println(e.getMessage())
-                );
-    }
-
 
     public void singIn(View view) {
         List<String> nameTeacher = new ArrayList<>();
