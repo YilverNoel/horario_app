@@ -1,10 +1,9 @@
 package com.example.hello_work;
 
 import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
+import static com.example.hello_work.constan.Constant.COLLECTION_USER;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hello_work.infraestructure.adapter.IAttendanceTeacher;
 import com.example.hello_work.infraestructure.adapter.imp.AttendanceTeacher;
 import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
-import com.example.hello_work.infraestructure.repository.MiDbHelper;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -99,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void singIn(View view) {
         List<String> nameTeacher = new ArrayList<>();
-        ConnectionFirebase.connection().collection(COLLECTION_RACE_SCHEDULE)
-                .whereEqualTo("codigo_profesor", code.getText().toString())
+        ConnectionFirebase.connection().collection(COLLECTION_USER)
+                .whereEqualTo("name_user", code.getText().toString())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        nameTeacher.add(documentSnapshot.get("nombre_profesor").toString());
+                        nameTeacher.add(documentSnapshot.get("name_user").toString());
                     }
                     validateNameTeacher(nameTeacher.get(0));
                 }).addOnFailureListener(

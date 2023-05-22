@@ -34,7 +34,7 @@
                 android:layout_marginLeft="10dp"
                 >
                 <TextView
-                    android:id="@+id/tvNombreProfe"
+                    android:id="@+id/tvNameTeacher"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="17dp"
@@ -48,7 +48,7 @@
                 android:layout_marginLeft="10dp"
                 >
                 <TextView
-                    android:id="@+id/tvCodigo"
+                    android:id="@+id/tvCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="17dp"
@@ -63,7 +63,7 @@
                 android:layout_marginLeft="10dp"
                 >
                 <TextView
-                    android:id="@+id/tvNombreMateria"
+                    android:id="@+id/tvNameSubject"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="17dp"
@@ -76,6 +76,7 @@
                 android:orientation="horizontal"
                 android:gravity="center">
                 <Button
+                    android:id="@+id/btnNo"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:background="@drawable/button_red"
@@ -85,6 +86,7 @@
                     android:textColor="@color/white"
                     />
                 <Button
+                    android:id="@+id/btnYes"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:background="@drawable/button_verde"

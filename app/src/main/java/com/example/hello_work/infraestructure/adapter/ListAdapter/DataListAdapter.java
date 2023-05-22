@@ -4,6 +4,7 @@ package com.example.hello_work.infraestructure.adapter.ListAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,12 +36,15 @@ public class DataListAdapter extends RecyclerView.Adapter<DataListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
        ClassData item = itemList.get(position);
-        holder.nombre.setText(item.getNameTeacher());
-        holder.codigo.setText(item.getSchedule());
-        holder.materia.setText(item.getNameSubject());
-        holder.itemView.setOnClickListener(v -> {
-            context.callback(item.getNameTeacher());
-        });
+        holder.name.setText(item.getNameTeacher());
+        holder.schedule.setText(item.getSchedule());
+        holder.subject.setText(item.getNameSubject());
+        holder.buttonYes.setOnClickListener(x->
+            context.callback(item, true)
+        );
+        holder.buttonNot.setOnClickListener(x->
+            context.callback(item, false)
+        );
     }
 
     @Override
@@ -48,20 +52,22 @@ public class DataListAdapter extends RecyclerView.Adapter<DataListAdapter.MyView
         return itemList.size();
     }
 
-    // Implementa los métodos necesarios: onCreateViewHolder, onBindViewHolder, getItemCount, etc.
-
-    // Aquí se define la clase ViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nombre;
-        public TextView materia;
-        public TextView codigo;
+        public TextView name;
+        public TextView subject;
+        public TextView schedule;
+        public Button buttonYes;
+        public Button buttonNot;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            nombre = itemView.findViewById(R.id.tvNombreProfe);
-            codigo = itemView.findViewById(R.id.tvCodigo);
-            materia = itemView.findViewById(R.id.tvNombreMateria);
+            name = itemView.findViewById(R.id.tvNameTeacher);
+            schedule = itemView.findViewById(R.id.tvCode);
+            subject = itemView.findViewById(R.id.tvNameSubject);
+            buttonYes = itemView.findViewById(R.id.btnYes);
+            buttonNot = itemView.findViewById(R.id.btnNo);
         }
     }
+    
 }
 
