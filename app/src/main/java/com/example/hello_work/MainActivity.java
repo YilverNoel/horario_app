@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Ocurrió un error al obtener los datos
                     System.out.println(e.getMessage());
                 });
     }
@@ -104,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         nameTeacher.add(documentSnapshot.get("name_user").toString());
                     }
-                    validateNameTeacher(nameTeacher.get(0));
+                    validateNameTeacher(nameTeacher);
                 }).addOnFailureListener(
                         e -> System.out.println(e.getMessage())
                 );
     }
 
-    private void validateNameTeacher(String nameTeacher) {
+    private void validateNameTeacher(List<String> nameTeacher) {
         if (!nameTeacher.isEmpty() && !code.getText().toString().isEmpty()) {
             Intent intent = new Intent(this, Asistencia.class);
             startActivity(intent);
