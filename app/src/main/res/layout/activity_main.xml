@@ -47,9 +47,7 @@
                         android:onClick="openXls"
                         android:textColor="@color/white"
                         android:text="Version 2.0.0"
-                        android:textSize="20dp"
-                        >
-                    </TextView>
+                        android:textSize="20dp"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -102,7 +100,7 @@
                     android:drawableLeft="@drawable/registerlittle"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/red_ufpso"
-                    android:hint="código"
+                    android:hint="Usuario"
                     android:textColorHint="#757373"></EditText>
 
                 <Button
