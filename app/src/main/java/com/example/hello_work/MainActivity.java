@@ -3,6 +3,7 @@ package com.example.hello_work;
 import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 import static com.example.hello_work.constan.Constant.COLLECTION_USER;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hello_work.infraestructure.adapter.IAttendanceTeacher;
@@ -68,10 +70,28 @@ public class MainActivity extends AppCompatActivity {
                 .limit(1)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        deleteDataAttendance();
-                    }
-                    selectFileLauncher.launch("application/vnd.ms-excel");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Confirmación");
+                    builder.setMessage("¿Estás seguro de que quieres cargar de nuevo los datos?");
+                    builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                deleteDataAttendance();
+                                selectFileLauncher.launch("application/vnd.ms-excel");
+                            }else{
+                                selectFileLauncher.launch("application/vnd.ms-excel");
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // El usuario hizo clic en Cancelar, no hacer nada
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 })
                 .addOnFailureListener(e -> {
                     // Ocurrió un error al obtener los datos
@@ -88,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
                         documentSnapshot.getReference().delete();
                     }
                 })
-                .addOnFailureListener(e -> {
-                    System.out.println(e.getMessage());
-                });
+                .addOnFailureListener(e ->
+                        System.out.println(e.getMessage())
+                );
     }
 
 

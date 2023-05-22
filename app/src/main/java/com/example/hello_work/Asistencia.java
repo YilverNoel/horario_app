@@ -19,9 +19,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class Asistencia extends AppCompatActivity implements Listener {
@@ -46,8 +48,7 @@ public class Asistencia extends AppCompatActivity implements Listener {
     private void listHourTeacherDayWeek() {
         LocalTime hourNow = LocalTime.now();
         LocalDate dateNow = LocalDate.now();
-//        String dayOfWeek = translateDayWeek(dateNow.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
-        String dayOfWeek = "lunes";
+        String dayOfWeek = translateDayWeek(dateNow.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
         ConnectionFirebase.connection()
                 .collection(COLLECTION_RACE_SCHEDULE)
                 .whereNotEqualTo(dayOfWeek, "null")
