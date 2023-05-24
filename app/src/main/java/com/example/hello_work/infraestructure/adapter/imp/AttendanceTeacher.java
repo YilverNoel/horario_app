@@ -52,6 +52,7 @@ public class AttendanceTeacher implements IAttendanceTeacher {
                 .addOnFailureListener(e -> {
                     // Ocurrió un error al agregar los datos
                     System.out.println("error -> "+e.getMessage());
+                    throw new RuntimeException();
                 });
     }
 

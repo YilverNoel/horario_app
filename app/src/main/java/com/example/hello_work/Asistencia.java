@@ -201,10 +201,8 @@ public class Asistencia extends AppCompatActivity implements Listener {
                         public void onClick(DialogInterface dialog, int which) {
                             if (!queryDocumentSnapshots.isEmpty()) {
                                 deleteDataAttendance();
-                                selectFileLauncher.launch("application/vnd.ms-excel");
-                            }else{
-                                selectFileLauncher.launch("application/vnd.ms-excel");
                             }
+                            selectFileLauncher.launch("application/vnd.ms-excel");
                         }
                     });
                     builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -250,6 +248,7 @@ public class Asistencia extends AppCompatActivity implements Listener {
                     while (rowIterator.hasNext()) {
                         attendanceTeacher.insertTeacher(rowIterator.next(), ConnectionFirebase.connection());
                     }
+                    Toast.makeText(Asistencia.this,"Se han cargado \nlos datos",Toast.LENGTH_LONG);
                 } catch (Exception e) {
                     e.printStackTrace();
 
