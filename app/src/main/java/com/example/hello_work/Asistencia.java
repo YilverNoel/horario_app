@@ -6,6 +6,7 @@ import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -43,11 +44,18 @@ public class Asistencia extends AppCompatActivity implements Listener {
 
     private RecyclerView recyclerView;
     private IAttendanceTeacher attendanceTeacher;
-
+    private ImageView buttonAddAttendance;
+    private String roleLogin;
+    private final static String ROLE_ADMIN = "admin";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asistencia);
+        buttonAddAttendance = findViewById(R.id.apenAtt);
+        roleLogin = getIntent().getExtras().getString("role");
+        if(!roleLogin.equals(ROLE_ADMIN)) {
+            buttonAddAttendance.setVisibility(View.INVISIBLE);
+        }
 
         attendanceTeacher = new AttendanceTeacher();
         recyclerView = findViewById(R.id.recycler);
@@ -121,6 +129,7 @@ public class Asistencia extends AppCompatActivity implements Listener {
                 i++;
             }
         }
+
         return hoursClass;
     }
 
@@ -215,7 +224,6 @@ public class Asistencia extends AppCompatActivity implements Listener {
                     alertDialog.show();
                 })
                 .addOnFailureListener(e -> {
-                    // Ocurrió un error al obtener los datos
                     System.out.println(e.getMessage());
                 });
     }
