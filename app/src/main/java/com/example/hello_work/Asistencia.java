@@ -3,6 +3,7 @@ package com.example.hello_work;
 import static com.example.hello_work.constan.Constant.COLLECTION_ATTENDANCE;
 import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -47,12 +48,15 @@ public class Asistencia extends AppCompatActivity implements Listener {
     private ImageView buttonAddAttendance;
     private String roleLogin;
     private final static String ROLE_ADMIN = "admin";
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asistencia);
         buttonAddAttendance = findViewById(R.id.apenAtt);
         roleLogin = getIntent().getExtras().getString("role");
+        progressDialog = new ProgressDialog(this, R.style.CustomProgressDialog);
+
         if(!roleLogin.equals(ROLE_ADMIN)) {
             buttonAddAttendance.setVisibility(View.INVISIBLE);
         }
@@ -197,6 +201,9 @@ public class Asistencia extends AppCompatActivity implements Listener {
     }
 
     public void openXls(View view) {
+        progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
         ConnectionFirebase.connection()
                 .collection(COLLECTION_RACE_SCHEDULE)
                 .limit(1)
@@ -205,6 +212,7 @@ public class Asistencia extends AppCompatActivity implements Listener {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Confirmación");
                     builder.setMessage("¿Estás seguro de que quieres cargar de nuevo los datos?");
+                    builder.setCancelable(false);
                     builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -212,11 +220,13 @@ public class Asistencia extends AppCompatActivity implements Listener {
                                 deleteDataAttendance();
                             }
                             selectFileLauncher.launch("application/vnd.ms-excel");
+                            progressDialog.dismiss();
                         }
                     });
                     builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            progressDialog.dismiss();
                             // El usuario hizo clic en Cancelar, no hacer nada
                         }
                     });
