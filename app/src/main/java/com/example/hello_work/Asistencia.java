@@ -294,4 +294,9 @@ public class Asistencia extends AppCompatActivity implements Listener {
     public void onBackPressed(){
         //do nothing
     }
+
+    public void logout(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

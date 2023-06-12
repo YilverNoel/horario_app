@@ -2,6 +2,7 @@ package com.example.hello_work;
 
 import static com.example.hello_work.constan.Constant.COLLECTION_USER;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -122,5 +123,10 @@ public class AddUser extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         //do nothing
+    }
+    public void back(View view){
+        Intent intent = new Intent(this, Asistencia.class);
+        intent.putExtra("role", "admin");
+        startActivity(intent);
     }
 }
