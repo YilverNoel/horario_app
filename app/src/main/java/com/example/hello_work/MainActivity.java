@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hello_work.infraestructure.repository.ConnectionFirebase;
+import com.example.hello_work.utils.EncryptPassword;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void singIn(View view) {
-        if(!code.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+        if (!code.getText().toString().isEmpty() && !password.getText().toString().isEmpty()) {
             progressDialog.setProgressStyle(ProgressDialog.BUTTON_NEUTRAL);
             progressDialog.show();
         }
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> nameRole = new ArrayList<>();
         ConnectionFirebase.connection().collection(COLLECTION_USER)
                 .whereEqualTo("name_user", code.getText().toString())
-                .whereEqualTo("password", encryptPassword(password.getText().toString()))
+                .whereEqualTo("password", EncryptPassword.encryptPassword(password.getText().toString()))
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
                     validateNameTeacher(nameRole);
                 }).addOnFailureListener(
                         e -> {
-                                System.out.println(e.getMessage());
-                                progressDialog.dismiss();
+                            System.out.println(e.getMessage());
+                            progressDialog.dismiss();
                         }
                 );
     }
@@ -66,13 +67,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "El usuario ingresado no existe", Toast.LENGTH_LONG).show();
         }
-    }
-    private String encryptPassword(String pass){
-        StringBuilder passEncoding = new StringBuilder();
-        for(byte encoding: pass.getBytes(StandardCharsets.UTF_8)){
-            passEncoding.append(encoding);
-        }
-        return passEncoding.toString();
     }
 
 }

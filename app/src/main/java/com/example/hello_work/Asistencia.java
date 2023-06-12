@@ -5,6 +5,7 @@ import static com.example.hello_work.constan.Constant.COLLECTION_RACE_SCHEDULE;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,20 +47,21 @@ public class Asistencia extends AppCompatActivity implements Listener {
     private RecyclerView recyclerView;
     private IAttendanceTeacher attendanceTeacher;
     private ImageView buttonAddAttendance;
+    private ImageView buttonAddUser;
     private String roleLogin;
     private final static String ROLE_ADMIN = "admin";
     private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asistencia);
         buttonAddAttendance = findViewById(R.id.apenAtt);
+        buttonAddUser = findViewById(R.id.addUser);
         roleLogin = getIntent().getExtras().getString("role");
         progressDialog = new ProgressDialog(this, R.style.CustomProgressDialog);
 
-        if(!roleLogin.equals(ROLE_ADMIN)) {
-            buttonAddAttendance.setVisibility(View.INVISIBLE);
-        }
+        hideButtonsIsNotAdmin();
 
         attendanceTeacher = new AttendanceTeacher();
         recyclerView = findViewById(R.id.recycler);
@@ -71,6 +73,14 @@ public class Asistencia extends AppCompatActivity implements Listener {
 
 
     }
+
+    private void hideButtonsIsNotAdmin() {
+        if (!roleLogin.equals(ROLE_ADMIN)) {
+            buttonAddAttendance.setVisibility(View.INVISIBLE);
+            buttonAddUser.setVisibility(View.INVISIBLE);
+        }
+    }
+
 
     private void listHourTeacherDayWeek() {
         LocalTime hourNow = LocalTime.now();
@@ -180,7 +190,7 @@ public class Asistencia extends AppCompatActivity implements Listener {
                 });
     }
 
-    private void existAttendance(Map<String, Object> values){
+    private void existAttendance(Map<String, Object> values) {
         ConnectionFirebase.connection()
                 .collection(COLLECTION_ATTENDANCE)
                 .whereEqualTo("codigo_profesor", values.get("codigo_profesor"))
@@ -191,12 +201,12 @@ public class Asistencia extends AppCompatActivity implements Listener {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         saveAttendance(values);
-                    }else{
+                    } else {
                         Toast.makeText(this, "Registro existente", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(e ->
-                    System.out.println(e.getMessage())
+                        System.out.println(e.getMessage())
                 );
     }
 
@@ -266,11 +276,22 @@ public class Asistencia extends AppCompatActivity implements Listener {
                     while (rowIterator.hasNext()) {
                         attendanceTeacher.insertTeacher(rowIterator.next(), ConnectionFirebase.connection());
                     }
-                    Toast.makeText(Asistencia.this,"Se han cargado \nlos datos",Toast.LENGTH_LONG);
+                    Toast.makeText(Asistencia.this, "Se han cargado \nlos datos", Toast.LENGTH_LONG);
                 } catch (Exception e) {
                     e.printStackTrace();
 
                     Toast.makeText(Asistencia.this, "Error al procesar el archivo", Toast.LENGTH_SHORT).show();
                 }
             });
+
+
+    public void addUser(View view) {
+        Intent intent = new Intent(this, AddUser.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed(){
+        //do nothing
+    }
 }
