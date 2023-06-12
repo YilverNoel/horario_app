@@ -128,5 +128,6 @@ public class AddUser extends AppCompatActivity {
         Intent intent = new Intent(this, Asistencia.class);
         intent.putExtra("role", "admin");
         startActivity(intent);
+        finish();
     }
 }
