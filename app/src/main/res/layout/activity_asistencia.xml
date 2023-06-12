@@ -27,17 +27,54 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginBottom="35dp"
-                android:text="Control de asistencia"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                android:textStyle="bold">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            </TextView>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="72dp"
+                        android:text="Control de\n asistencia"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.837">
+
+                    </TextView>
+
+                    <ImageView
+                        android:layout_width="90dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="84dp"
+                        android:layout_marginBottom="28dp"
+                        android:contentDescription="logout"
+                        android:src="@drawable/salida"
+                        android:tint="@color/white"
+                        android:onClick="logout"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/textView"
+                        tools:ignore="UseAppTint">
+
+                    </ImageView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
