@@ -29,4 +29,10 @@
     <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <string-array name="spinner_items">
+        <item>-Seleccione un rol-</item>
+        <item>admin</item>
+        <item>asistente</item>
+    </string-array>
 </resources>

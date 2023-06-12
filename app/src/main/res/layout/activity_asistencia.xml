@@ -131,19 +131,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:gravity="center"
                 >
                 <ImageView
                     android:id="@+id/apenAtt"
                     android:layout_width="90dp"
                     android:layout_height="70dp"
-                    android:src="@drawable/add"
+                    android:src="@drawable/calendar"
                     android:layout_gravity="center_horizontal"
                     android:tint="@color/red_ufpso"
                     android:contentDescription="Imagen add"
                     android:onClick="openXls"
                     tools:ignore="UseAppTint">
                 </ImageView>
+                <ImageView
+                    android:id="@+id/addUser"
+                    android:layout_width="90dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/useradd"
+                    android:layout_gravity="center_horizontal"
+                    android:tint="@color/red_ufpso"
+                    android:contentDescription="Imagen add"
+                    android:onClick="addUser"
+                    tools:ignore="UseAppTint">
+                </ImageView>
+
 
             </LinearLayout>
         </LinearLayout>
